@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 leading-none">
-              GymTimer
+              RepStack
             </h1>
           </div>
         </div>

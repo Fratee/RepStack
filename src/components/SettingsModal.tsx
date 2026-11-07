@@ -116,7 +116,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `gymtimer-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `repstack-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -140,7 +140,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         }
         window.location.reload();
       } catch {
-        alert('File non valido. Assicurati che sia un backup JSON esportato da GymTimer.');
+        alert('File non valido. Assicurati che sia un backup JSON esportato da RepStack.');
       }
     };
     reader.readAsText(file);

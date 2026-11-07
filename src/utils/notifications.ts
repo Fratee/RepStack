@@ -367,7 +367,7 @@ export const testWatchNotification = async (): Promise<{
         reg = await registerServiceWorker();
       }
       if (reg && reg.showNotification) {
-        await reg.showNotification('⌚ GymTimer: Test Smartwatch & Telefono', {
+        await reg.showNotification('⌚ RepStack: Test Smartwatch & Telefono', {
           body: 'Perfetto! Riceverai vibrazione e notifica al termine di ogni riposo.',
           icon: '/icon-192.png',
           badge: '/badge-72.png',
@@ -380,7 +380,7 @@ export const testWatchNotification = async (): Promise<{
       }
     }
 
-    new Notification('⌚ GymTimer: Test Smartwatch & Telefono', {
+    new Notification('⌚ RepStack: Test Smartwatch & Telefono', {
       body: 'Perfetto! Riceverai vibrazione e notifica al termine di ogni riposo.',
       icon: '/icon-192.png',
     });

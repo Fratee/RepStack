@@ -92,7 +92,7 @@ export async function handleApiRequest(req, res) {
     const stats = getStats();
     sendJson(res, 200, {
       status: 'ok',
-      service: 'GymTimer Pro Server',
+      service: 'RepStack Server',
       timestamp: Date.now(),
       stats,
     });

@@ -1,6 +1,6 @@
 {
-  "name": "GymTimer Pro - Scheda & Timer Riposo",
-  "short_name": "GymTimer",
+  "name": "RepStack - Scheda & Timer Riposo",
+  "short_name": "RepStack",
   "description": "App per allenamento in palestra con timer riposo personalizzato e notifiche per smartwatch",
   "start_url": "/",
   "id": "/",

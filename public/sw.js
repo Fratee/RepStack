@@ -1,5 +1,5 @@
-// Service Worker for GymTimer Pro
-const CACHE_NAME = 'gymtimer-v2';
+// Service Worker for RepStack
+const CACHE_NAME = 'repstack-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

@@ -1,4 +1,4 @@
-// Standalone production Node.js server for GymTimer Pro
+// Standalone production Node.js server for RepStack
 // Serves API endpoints + static production build from dist/ with SPA fallback
 
 import http from 'node:http';
@@ -114,7 +114,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`===============================================`);
-  console.log(`🏋️  GymTimer Pro Server is running!`);
+  console.log(`🏋️  RepStack Server is running!`);
   console.log(`🌐 Local:   http://localhost:${PORT}`);
   console.log(`🌐 Network: http://${HOST}:${PORT}`);
   console.log(`💾 SQLite:  c:\\server\\gym\\data\\gym.db`);

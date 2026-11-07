@@ -179,7 +179,7 @@ export const WatchGuideModal: React.FC<WatchGuideModalProps> = ({ isOpen, onClos
               </li>
               <li>Apri l'app <strong>Watch</strong> sul tuo iPhone &gt; <strong>Notifiche</strong>.</li>
               <li>
-                Scorri fino a <em>Duplica avvisi da iPhone</em> e attiva <strong>GymTimer</strong> (o <strong>Safari</strong>).
+                Scorri fino a <em>Duplica avvisi da iPhone</em> e attiva <strong>RepStack</strong> (o <strong>Safari</strong>).
               </li>
               <li>Quando scade il recupero, l'Apple Watch vibrerà al polso mostrandoti la prossima serie!</li>
             </ol>
@@ -194,7 +194,7 @@ export const WatchGuideModal: React.FC<WatchGuideModalProps> = ({ isOpen, onClos
             <ol className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-decimal pl-4 leading-relaxed">
               <li>Apri l'app <strong>Galaxy Wearable</strong> o <strong>Wear OS</strong> sul telefono.</li>
               <li>Vai su <strong>Notifiche orologio</strong> &gt; <strong>Notifiche app</strong>.</li>
-              <li>Attiva la spunta su <strong>GymTimer</strong> o <strong>Chrome</strong>.</li>
+              <li>Attiva la spunta su <strong>RepStack</strong> o <strong>Chrome</strong>.</li>
               <li>Le notifiche del timer con vibrazione compariranno istantaneamente sul display del tuo orologio!</li>
             </ol>
           </div>
