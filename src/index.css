@@ -143,17 +143,17 @@ html[data-accent="purple"] {
 
 html[data-accent="rose"] {
   --color-accent-text: #020617;
-  --color-emerald-300: #fce7f3;
-  --color-emerald-400: #fbcfe8;
-  --color-emerald-500: #f9a8d4;
-  --color-emerald-600: #f472b6;
-  --color-emerald-700: #ec4899;
-  --color-emerald-800: #db2777;
+  --color-emerald-300: #fbcfe8;
+  --color-emerald-400: #f9a8d4;
+  --color-emerald-500: #f472b6;
+  --color-emerald-600: #ec4899;
+  --color-emerald-700: #db2777;
+  --color-emerald-800: #be185d;
   --color-emerald-950: #500724;
-  --color-teal-400: #fbcfe8;
-  --color-teal-500: #f9a8d4;
-  --color-cyan-400: #fce7f3;
-  --color-cyan-500: #fbcfe8;
+  --color-teal-400: #f9a8d4;
+  --color-teal-500: #f472b6;
+  --color-cyan-400: #fbcfe8;
+  --color-cyan-500: #f9a8d4;
 }
 
 html[data-accent="red"] {
