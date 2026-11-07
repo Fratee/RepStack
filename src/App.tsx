@@ -12,13 +12,12 @@ import { QuickTimerModal } from './components/QuickTimerModal';
 import { EditExerciseModal } from './components/EditExerciseModal';
 import { AddExerciseModal } from './components/AddExerciseModal';
 import { EditDayModal } from './components/EditDayModal';
-import { ReorderExercisesModal } from './components/ReorderExercisesModal';
 import { PWAInstallModal } from './components/PWAInstallModal';
 import { AuthModal } from './components/AuthModal';
 import { AccountModal } from './components/AccountModal';
 import type { Exercise } from './types';
 import { unlockAudio } from './utils/audio';
-import { PlusCircle, Watch, Cloud, ChevronDown, Edit3, Settings, Plus, Check } from 'lucide-react';
+import { PlusCircle, Watch, Cloud, ChevronDown, Edit3, Plus, Check } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -49,7 +48,6 @@ const GymAppContent: React.FC = () => {
   const [isEditDayOpen, setIsEditDayOpen] = useState(false);
   const [isCreatingNewDay, setIsCreatingNewDay] = useState(false);
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
-  const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
   const dayDropdownRef = useRef<HTMLDivElement>(null);
 
   // PWA Install Prompt
@@ -178,20 +176,6 @@ const GymAppContent: React.FC = () => {
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700/60 shrink-0">
                 {currentWorkout.exercises.length} es.
               </span>
-
-              {/* Edit Day Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsCreatingNewDay(false);
-                  setIsEditDayOpen(true);
-                  setIsDayDropdownOpen(false);
-                }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer"
-                title="Modifica titolo e focus del giorno"
-              >
-                <Edit3 className="w-4 h-4" />
-              </button>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium truncate">
@@ -271,17 +255,20 @@ const GymAppContent: React.FC = () => {
             )}
           </div>
 
-          {/* Action buttons: Cog for exercises ordering + Add exercise */}
+          {/* Action buttons: Edit Day & Order (Pencil Icon) + Add exercise */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {/* Cog button for exercises ordering */}
+            {/* Edit Day & Exercise Order button (Pencil Icon) */}
             <button
               type="button"
-              onClick={() => setIsReorderModalOpen(true)}
+              onClick={() => {
+                setIsCreatingNewDay(false);
+                setIsEditDayOpen(true);
+              }}
               className="px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-300 dark:border-slate-700/60 shadow-xs hover:border-emerald-500 dark:hover:border-emerald-500 transition cursor-pointer group"
-              title="Imposta ordine degli esercizi (rotella)"
+              title="Modifica scheda e ordine esercizi (matita)"
             >
-              <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-emerald-500 group-hover:rotate-45 transition duration-300" />
-              <span className="hidden sm:inline font-bold">Ordina</span>
+              <Edit3 className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-emerald-500 transition" />
+              <span className="hidden sm:inline font-bold">Modifica</span>
             </button>
 
             {/* Add exercise button */}
@@ -369,17 +356,12 @@ const GymAppContent: React.FC = () => {
         onClose={() => setIsAddExerciseOpen(false)}
       />
 
-      {/* Edit Day & Reorder Modals */}
+      {/* Edit Day & Reorder Modal */}
       <EditDayModal
         day={isCreatingNewDay ? null : currentWorkout}
         isOpen={isEditDayOpen}
         onClose={() => setIsEditDayOpen(false)}
         isCreatingNew={isCreatingNewDay}
-      />
-
-      <ReorderExercisesModal
-        isOpen={isReorderModalOpen}
-        onClose={() => setIsReorderModalOpen(false)}
       />
 
       <PWAInstallModal
