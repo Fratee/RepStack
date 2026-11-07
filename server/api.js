@@ -58,10 +58,40 @@ export function sendJson(res, statusCode, data, extraHeaders = {}) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
     ...extraHeaders,
   });
   res.end(payload);
 }
+
+// In-memory sliding window rate limiter for auth routes (15 req/min per IP)
+const authRateLimits = new Map();
+function isAuthRateLimited(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  const ip = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : null) || req.socket?.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 60000;
+  const limit = 15;
+  const list = (authRateLimits.get(ip) || []).filter((t) => now - t < windowMs);
+  if (list.length >= limit) {
+    authRateLimits.set(ip, list);
+    return true;
+  }
+  list.push(now);
+  authRateLimits.set(ip, list);
+  return false;
+}
+
+// Periodically clean up stale rate-limit records
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, list] of authRateLimits.entries()) {
+    const valid = list.filter((t) => now - t < 60000);
+    if (valid.length === 0) authRateLimits.delete(ip);
+    else authRateLimits.set(ip, valid);
+  }
+}, 300000).unref();
 
 // Handle CORS preflight
 export function handleOptions(req, res) {
@@ -101,6 +131,10 @@ export async function handleApiRequest(req, res) {
 
   // 2. Auth: Register
   if (req.method === 'POST' && pathname === '/api/auth/register') {
+    if (isAuthRateLimited(req)) {
+      sendJson(res, 429, { success: false, error: 'Troppi tentativi. Riprova tra un minuto.' });
+      return true;
+    }
     try {
       const body = await readJsonBody(req);
       const username = String(body.username || '').trim();
@@ -185,6 +219,10 @@ export async function handleApiRequest(req, res) {
 
   // 3. Auth: Login
   if (req.method === 'POST' && pathname === '/api/auth/login') {
+    if (isAuthRateLimited(req)) {
+      sendJson(res, 429, { success: false, error: 'Troppi tentativi. Riprova tra un minuto.' });
+      return true;
+    }
     try {
       const body = await readJsonBody(req);
       const username = String(body.username || '').trim();

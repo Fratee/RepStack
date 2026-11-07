@@ -87,6 +87,9 @@ function serveStatic(req, res) {
     'Content-Type': contentType,
     'Content-Length': stat.size,
     'Cache-Control': cacheControl,
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
   });
 
   const stream = fs.createReadStream(filePath);
@@ -111,6 +114,22 @@ const server = http.createServer(async (req, res) => {
   // Otherwise serve static files
   serveStatic(req, res);
 });
+
+// Graceful shutdown handling
+function gracefulShutdown(signal) {
+  console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+  server.close(() => {
+    console.log('RepStack HTTP server closed.');
+    process.exit(0);
+  });
+  setTimeout(() => {
+    console.error('Forcefully terminating RepStack server after timeout.');
+    process.exit(1);
+  }, 5000).unref();
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 server.listen(PORT, HOST, () => {
   console.log(`===============================================`);
