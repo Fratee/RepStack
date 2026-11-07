@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, X } from 'lucide-react';
+import { PlusCircle, X, Plus, Minus } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
 
 interface AddExerciseModalProps {
@@ -98,26 +98,63 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                 Serie
               </label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={setsCount}
-                onChange={(e) => setSetsCount(parseInt(e.target.value, 10) || 1)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-center font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-              />
+              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-1.5 h-11">
+                <button
+                  type="button"
+                  onClick={() => setSetsCount((c) => Math.max(1, c - 1))}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="-1 serie"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="font-mono font-bold text-base text-slate-900 dark:text-white">{setsCount}</span>
+                <button
+                  type="button"
+                  onClick={() => setSetsCount((c) => Math.min(10, c + 1))}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="+1 serie"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
+
             <div>
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                 Reps Target
               </label>
-              <input
-                type="text"
-                value={targetReps}
-                onChange={(e) => setTargetReps(e.target.value)}
-                placeholder="es. 8 o 10"
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-center font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-              />
+              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-1.5 h-11">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const match = targetReps.match(/\d+/);
+                    const current = match ? parseInt(match[0], 10) : 10;
+                    setTargetReps(String(Math.max(1, current - 1)));
+                  }}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="-1 rip"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <input
+                  type="text"
+                  value={targetReps}
+                  onChange={(e) => setTargetReps(e.target.value)}
+                  className="w-16 bg-transparent text-center font-mono font-bold text-base text-slate-900 dark:text-white focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const match = targetReps.match(/\d+/);
+                    const current = match ? parseInt(match[0], 10) : 10;
+                    setTargetReps(String(current + 1));
+                  }}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="+1 rip"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
 

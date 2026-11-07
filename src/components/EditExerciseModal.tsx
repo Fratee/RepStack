@@ -124,11 +124,12 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                 Numero di Serie
               </label>
-              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-1.5">
+              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-1.5 h-11">
                 <button
                   type="button"
                   onClick={() => setSetsCount((c) => Math.max(1, c - 1))}
-                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer"
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="-1 serie"
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
@@ -136,7 +137,8 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
                 <button
                   type="button"
                   onClick={() => setSetsCount((c) => Math.min(10, c + 1))}
-                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer"
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="+1 serie"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -147,13 +149,38 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                 Ripetizioni Target
               </label>
-              <input
-                type="text"
-                value={targetReps}
-                onChange={(e) => setTargetReps(e.target.value)}
-                placeholder="es. 8, 10, 12"
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 h-11 text-center font-mono"
-              />
+              <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-1.5 h-11">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const match = targetReps.match(/\d+/);
+                    const current = match ? parseInt(match[0], 10) : 10;
+                    setTargetReps(String(Math.max(1, current - 1)));
+                  }}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="-1 rip"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <input
+                  type="text"
+                  value={targetReps}
+                  onChange={(e) => setTargetReps(e.target.value)}
+                  className="w-16 bg-transparent text-center font-mono font-bold text-base text-slate-900 dark:text-white focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const match = targetReps.match(/\d+/);
+                    const current = match ? parseInt(match[0], 10) : 10;
+                    setTargetReps(String(current + 1));
+                  }}
+                  className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold cursor-pointer active:scale-95 transition"
+                  title="+1 rip"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
 
