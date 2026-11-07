@@ -101,7 +101,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
           <button
             type="button"
             onClick={() => handleStartTimer()}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold transition cursor-pointer group"
+            className="h-8 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold transition cursor-pointer group"
             title={`Avvia timer riposo (${exercise.defaultRestSeconds}s)`}
           >
             <Clock className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition" />
@@ -117,7 +117,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
           <button
             type="button"
             onClick={() => onEdit(exercise)}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer"
+            className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer flex items-center justify-center shrink-0"
             title="Modifica esercizio"
           >
             <Edit3 className="w-4 h-4" />
