@@ -20,6 +20,7 @@ import {
   setScreenWakeLock,
   registerServiceWorker,
 } from '../utils/notifications';
+import { getAccentOption } from '../utils/accentColors';
 
 interface WorkoutContextType {
   workouts: WorkoutDay[];
@@ -557,6 +558,8 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const accent = settings.accentColor || 'emerald';
     root.setAttribute('data-accent', accent);
+    const accentOption = getAccentOption(accent);
+    root.style.setProperty('--color-accent-text', accentOption.contrastTextColor);
 
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {

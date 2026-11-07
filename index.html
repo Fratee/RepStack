@@ -7,7 +7,11 @@
     <script>
       try {
         const s = JSON.parse(localStorage.getItem('gym_settings_v1') || '{}');
-        if (s.accentColor) document.documentElement.setAttribute('data-accent', s.accentColor);
+        if (s.accentColor) {
+          document.documentElement.setAttribute('data-accent', s.accentColor);
+          const whiteAccents = ['purple', 'blue', 'red', 'rose'];
+          document.documentElement.style.setProperty('--color-accent-text', whiteAccents.includes(s.accentColor) ? '#ffffff' : '#020617');
+        }
         if (s.theme === 'light') document.documentElement.classList.replace('dark', 'light');
       } catch (e) {}
     </script>

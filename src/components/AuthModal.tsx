@@ -267,8 +267,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       }`}
                     >
                       <span
-                        className="w-6 h-6 rounded-full shadow-sm flex items-center justify-center text-white"
-                        style={{ backgroundColor: c.hex }}
+                        className="w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform"
+                        style={{ backgroundColor: c.hex, color: c.contrastTextColor }}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                       </span>

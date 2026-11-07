@@ -77,7 +77,12 @@ html.light ::-webkit-scrollbar-thumb {
 }
 
 /* Dynamic Accent Color Themes */
+:root {
+  --color-accent-text: #020617;
+}
+
 html[data-accent="emerald"] {
+  --color-accent-text: #020617;
   --color-emerald-300: #6ee7b7;
   --color-emerald-400: #34d399;
   --color-emerald-500: #10b981;
@@ -92,6 +97,7 @@ html[data-accent="emerald"] {
 }
 
 html[data-accent="blue"] {
+  --color-accent-text: #ffffff;
   --color-emerald-300: #93c5fd;
   --color-emerald-400: #60a5fa;
   --color-emerald-500: #3b82f6;
@@ -106,6 +112,7 @@ html[data-accent="blue"] {
 }
 
 html[data-accent="cyan"] {
+  --color-accent-text: #020617;
   --color-emerald-300: #67e8f9;
   --color-emerald-400: #22d3ee;
   --color-emerald-500: #06b6d4;
@@ -120,6 +127,7 @@ html[data-accent="cyan"] {
 }
 
 html[data-accent="purple"] {
+  --color-accent-text: #ffffff;
   --color-emerald-300: #d8b4fe;
   --color-emerald-400: #c084fc;
   --color-emerald-500: #a855f7;
@@ -134,6 +142,7 @@ html[data-accent="purple"] {
 }
 
 html[data-accent="rose"] {
+  --color-accent-text: #ffffff;
   --color-emerald-300: #fda4af;
   --color-emerald-400: #fb7185;
   --color-emerald-500: #f43f5e;
@@ -148,6 +157,7 @@ html[data-accent="rose"] {
 }
 
 html[data-accent="red"] {
+  --color-accent-text: #ffffff;
   --color-emerald-300: #fca5a5;
   --color-emerald-400: #f87171;
   --color-emerald-500: #ef4444;
@@ -162,6 +172,7 @@ html[data-accent="red"] {
 }
 
 html[data-accent="orange"] {
+  --color-accent-text: #020617;
   --color-emerald-300: #fdba74;
   --color-emerald-400: #fb923c;
   --color-emerald-500: #f97316;
@@ -176,6 +187,7 @@ html[data-accent="orange"] {
 }
 
 html[data-accent="amber"] {
+  --color-accent-text: #020617;
   --color-emerald-300: #fcd34d;
   --color-emerald-400: #fbbf24;
   --color-emerald-500: #f59e0b;
@@ -187,4 +199,20 @@ html[data-accent="amber"] {
   --color-teal-500: #eab308;
   --color-cyan-400: #f59e0b;
   --color-cyan-500: #d97706;
+}
+
+/* WCAG Contrast Rule for Accent Buttons, Badges and Icons */
+.bg-emerald-500.text-slate-950,
+[class*="from-emerald-500"].text-slate-950,
+.bg-emerald-500 .text-slate-950,
+[class*="from-emerald-500"] .text-slate-950,
+[class*="from-emerald-500"] svg.text-slate-950,
+.text-accent-contrast {
+  color: var(--color-accent-text, #020617) !important;
+}
+
+[class*="from-emerald-500"] .border-slate-950,
+.bg-emerald-500 .border-slate-950 {
+  border-color: var(--color-accent-text, #020617) !important;
+  border-top-color: transparent !important;
 }

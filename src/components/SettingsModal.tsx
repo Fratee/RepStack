@@ -315,8 +315,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     }`}
                   >
                     <span
-                      className="w-7 h-7 rounded-full shadow-sm flex items-center justify-center text-white"
-                      style={{ backgroundColor: c.hex }}
+                      className="w-7 h-7 rounded-full shadow-sm flex items-center justify-center transition-transform"
+                      style={{ backgroundColor: c.hex, color: c.contrastTextColor }}
                     >
                       {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
                     </span>
