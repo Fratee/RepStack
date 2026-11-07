@@ -28,7 +28,7 @@ export const WeightSpinModal: React.FC<WeightSpinModalProps> = ({
   // Current integer weight and optional fractional 0.5kg
   const [selectedWeight, setSelectedWeight] = useState<number>(Math.floor(initialWeight) || 0);
   const [hasHalfKg, setHasHalfKg] = useState<boolean>(initialWeight % 1 !== 0);
-  const [applyToFollowing, setApplyToFollowing] = useState<boolean>(true);
+  const [applyToFollowing, setApplyToFollowing] = useState<boolean>(false);
 
   // 3D Drum roller ref
   const drumContainerRef = useRef<HTMLDivElement>(null);
@@ -43,6 +43,7 @@ export const WeightSpinModal: React.FC<WeightSpinModalProps> = ({
   // Sync initial weight when modal opens - immediate and exact
   useEffect(() => {
     if (isOpen) {
+      setApplyToFollowing(false);
       const whole = Math.max(0, Math.min(MAX_WEIGHT, Math.floor(initialWeight) || 0));
       setSelectedWeight(whole);
       setHasHalfKg(initialWeight % 1 !== 0);
