@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, Edit3, Clock, Plus, Minus, X } from 'lucide-react';
 import type { Exercise } from '../types';
 import { useWorkout } from '../context/WorkoutContext';
@@ -262,82 +263,92 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
       )}
 
       {/* Quick Machine Setting Modal */}
-      {isMachineModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="min-w-0 pr-2">
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate">Impostazione Macchina</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{exercise.name}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMachineModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="py-5 flex flex-col items-center">
-              <span className="text-[11px] text-slate-400 uppercase font-semibold tracking-wider mb-3">
-                Posizione / Perno / Sedile
-              </span>
-              <div className="flex items-center gap-3">
+      {isMachineModalOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none"
+            onClick={() => setIsMachineModalOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl text-slate-900 dark:text-slate-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="min-w-0 pr-2">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate">Impostazione Macchina</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{exercise.name}</p>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setTempSetting((v) => Math.max(0, (v ?? 1) - 1))}
-                  className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center text-lg active:scale-95 transition cursor-pointer"
-                  title="-1"
+                  onClick={() => setIsMachineModalOpen(false)}
+                  className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                 >
-                  <Minus className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </button>
-                <input
-                  type="number"
-                  step="any"
-                  value={tempSetting ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value.trim();
-                    setTempSetting(val === '' ? undefined : parseFloat(val));
+              </div>
+
+              <div className="py-5 flex flex-col items-center">
+                <span className="text-[11px] text-slate-400 uppercase font-semibold tracking-wider mb-3">
+                  Posizione / Perno / Sedile
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTempSetting((v) => Math.max(0, (v ?? 1) - 1))}
+                    className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center text-lg active:scale-95 transition cursor-pointer"
+                    title="-1"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="number"
+                    step="any"
+                    value={tempSetting ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value.trim();
+                      setTempSetting(val === '' ? undefined : parseFloat(val));
+                    }}
+                    className="w-24 h-12 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-2xl text-center font-mono text-2xl font-black text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                  >
+                  </input>
+                  <button
+                    type="button"
+                    onClick={() => setTempSetting((v) => (v === undefined ? 1 : v + 1))}
+                    className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center text-lg active:scale-95 transition cursor-pointer"
+                    title="+1"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExerciseMachineSetting(exercise.id, undefined);
+                    setIsMachineModalOpen(false);
                   }}
-                  className="w-24 h-12 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-2xl text-center font-mono text-2xl font-black text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-                />
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500/10 hover:text-rose-500 text-xs font-semibold text-slate-500 dark:text-slate-400 transition cursor-pointer"
+                >
+                  Rimuovi
+                </button>
                 <button
                   type="button"
-                  onClick={() => setTempSetting((v) => (v === undefined ? 1 : v + 1))}
-                  className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center text-lg active:scale-95 transition cursor-pointer"
-                  title="+1"
+                  onClick={() => {
+                    setExerciseMachineSetting(exercise.id, tempSetting);
+                    setIsMachineModalOpen(false);
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" />
+                  Salva
                 </button>
               </div>
             </div>
-
-            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setExerciseMachineSetting(exercise.id, undefined);
-                  setIsMachineModalOpen(false);
-                }}
-                className="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500/10 hover:text-rose-500 text-xs font-semibold text-slate-500 dark:text-slate-400 transition cursor-pointer"
-              >
-                Rimuovi
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setExerciseMachineSetting(exercise.id, tempSetting);
-                  setIsMachineModalOpen(false);
-                }}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition cursor-pointer"
-              >
-                Salva
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
