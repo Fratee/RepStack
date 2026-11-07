@@ -29,10 +29,9 @@ export const DEFAULT_WORKOUTS: WorkoutDay[] = [
         id: 'ex-1-2',
         name: 'Leg curl sdraiato',
         category: 'legs',
-        defaultRestSeconds: 120, // 1.5 / 2 minuti
-        restOptions: [90, 120],
+        defaultRestSeconds: 120, // 2 minuti
         machineSetting: 3,
-        notes: '4 serie da 10 ripetizioni con 1.5 o 2 min di riposo',
+        notes: '4 serie da 10 ripetizioni con 2 min di riposo',
         sets: createDefaultSets(4, '10', 30),
       },
       {

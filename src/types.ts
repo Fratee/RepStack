@@ -14,7 +14,6 @@ export interface Exercise {
   category: 'legs' | 'chest' | 'back' | 'shoulders' | 'arms' | 'core' | 'calves';
   sets: WorkoutSet[];
   defaultRestSeconds: number; // in seconds, e.g. 120, 90, 60
-  restOptions?: number[]; // e.g. [90, 120] for leg curl
   notes?: string;
   machineSetting?: number; // Optional numerical machine setting (e.g. seat height, pin position, lever notch)
 }

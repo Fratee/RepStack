@@ -118,7 +118,17 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [workouts, setWorkouts] = useState<WorkoutDay[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_WORKOUTS);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: WorkoutDay[] = JSON.parse(saved);
+        // Ensure each exercise has strictly one rest period (strip legacy restOptions)
+        return parsed.map((day) => ({
+          ...day,
+          exercises: day.exercises.map((ex) => {
+            const { restOptions: _unused, ...cleanEx } = ex as any;
+            return cleanEx;
+          }),
+        }));
+      }
     } catch (e) {
       console.error('Error loading workouts from localStorage:', e);
     }
