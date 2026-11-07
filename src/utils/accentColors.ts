@@ -45,11 +45,11 @@ export const ACCENT_COLORS: AccentOption[] = [
   },
   {
     id: 'rose',
-    label: 'Rosa Neon',
-    nameEn: 'Rose',
-    hex: '#f43f5e',
-    secondaryHex: '#ec4899',
-    contrastTextColor: getBestContrastTextColor('#f43f5e', '#ec4899'),
+    label: 'Rosa Pastello',
+    nameEn: 'Light Pink',
+    hex: '#f9a8d4',
+    secondaryHex: '#fbcfe8',
+    contrastTextColor: getBestContrastTextColor('#f9a8d4', '#fbcfe8'),
   },
   {
     id: 'red',

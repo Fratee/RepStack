@@ -252,7 +252,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <Palette className="w-3.5 h-3.5 text-emerald-500" />
                 <span>Colore di Accento (Personalizza Tema)</span>
               </label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-8 gap-1.5 sm:gap-2 pt-1 place-items-center">
                 {ACCENT_COLORS.map((c) => {
                   const isSelected = selectedAccent === c.id;
                   return (
@@ -260,21 +260,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       key={c.id}
                       type="button"
                       onClick={() => handleSelectAccent(c.id)}
-                      className={`p-2 rounded-2xl border transition-all flex flex-col items-center gap-1 cursor-pointer ${
+                      title={c.label}
+                      aria-label={c.label}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/30'
-                          : 'border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
+                          ? 'scale-110 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 ring-emerald-500 shadow-md'
+                          : 'hover:scale-105 opacity-80 hover:opacity-100 hover:ring-2 hover:ring-slate-300 dark:hover:ring-slate-700'
                       }`}
+                      style={{
+                        backgroundColor: c.hex,
+                        color: c.contrastTextColor,
+                      }}
                     >
-                      <span
-                        className="w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform"
-                        style={{ backgroundColor: c.hex, color: c.contrastTextColor }}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </span>
-                      <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 truncate max-w-full">
-                        {c.label}
-                      </span>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                     </button>
                   );
                 })}

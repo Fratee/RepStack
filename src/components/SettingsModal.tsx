@@ -368,7 +368,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-2 pt-1">
+            <div className="grid grid-cols-8 gap-1.5 sm:gap-2 pt-1 place-items-center">
               {ACCENT_COLORS.map((c) => {
                 const isSelected = (settings.accentColor || 'emerald') === c.id;
                 return (
@@ -376,21 +376,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     key={c.id}
                     type="button"
                     onClick={() => updateSettings({ accentColor: c.id })}
-                    className={`p-2.5 rounded-2xl border transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
+                    title={c.label}
+                    aria-label={c.label}
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/30'
-                        : 'border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-900/60 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'scale-110 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 ring-emerald-500 shadow-md'
+                        : 'hover:scale-105 opacity-80 hover:opacity-100 hover:ring-2 hover:ring-slate-300 dark:hover:ring-slate-700'
                     }`}
+                    style={{
+                      backgroundColor: c.hex,
+                      color: c.contrastTextColor,
+                    }}
                   >
-                    <span
-                      className="w-7 h-7 rounded-full shadow-sm flex items-center justify-center transition-transform"
-                      style={{ backgroundColor: c.hex, color: c.contrastTextColor }}
-                    >
-                      {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200 truncate max-w-full">
-                      {c.label}
-                    </span>
+                    {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
                   </button>
                 );
               })}
