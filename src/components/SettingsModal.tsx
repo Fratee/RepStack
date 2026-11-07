@@ -170,7 +170,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Settings List */}
         <div className="mt-5 space-y-4">
-          {/* ACCOUNT & SERVER SYNC (CLOUD BACKUP) */}
+          {/* 1. ACCOUNT & SERVER SYNC */}
           <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-slate-50 to-slate-50 dark:from-emerald-950/20 dark:via-slate-800/40 dark:to-slate-800/40 border border-emerald-500/30 dark:border-emerald-500/20">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-3">
@@ -238,7 +238,75 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* THEME SWITCHER (WHITE / DARK MODE) */}
+          {/* 2. TIMER AUTOMATICO */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <Timer className="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Timer automatico</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Avvia il riposo quando spunti una serie</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.autoStartTimer}
+              onChange={(e) => updateSettings({ autoStartTimer: e.target.checked })}
+              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 3. BEEPS (SUONI E SEGNALI ACUSTICI) */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <Volume2 className="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Suoni e Segnali Acustici</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Beep a 3-2-1s e campana di fine riposo</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.soundEnabled}
+              onChange={(e) => updateSettings({ soundEnabled: e.target.checked })}
+              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 4. VIBRATION */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <Vibrate className="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Vibrazione</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Feedback tattile al tocco e termine timer</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.vibrationEnabled}
+              onChange={(e) => updateSettings({ vibrationEnabled: e.target.checked })}
+              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 5. SCREEN ACTIVE (SCHERMO SEMPRE ATTIVO) */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Schermo sempre attivo</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Evita che il telefono vada in standby durante l'allenamento</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.wakeLockEnabled}
+              onChange={(e) => updateSettings({ wakeLockEnabled: e.target.checked })}
+              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* 6. THEME (CHIARO / SCURO) */}
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
@@ -284,7 +352,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Accent Color Customization */}
+          {/* 7. ACCENT COLOR */}
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -311,7 +379,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     className={`p-2.5 rounded-2xl border transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
                       isSelected
                         ? 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/30'
-                        : 'border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900/60 hover:border-slate-300 dark:hover:border-slate-700'
+                        : 'border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-900/60 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
                     <span
@@ -329,7 +397,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Smartwatch / Browser Notifications with Live Diagnostics */}
+          {/* 8. NOTIFICATIONS (SMARTWATCH & TELEFONO) */}
           <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -426,74 +494,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <ExternalLink className="w-3 h-3" />
               </button>
             </div>
-          </div>
-
-          {/* Auto-start timer */}
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <Timer className="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">Timer automatico</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Avvia il riposo quando spunti una serie</p>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.autoStartTimer}
-              onChange={(e) => updateSettings({ autoStartTimer: e.target.checked })}
-              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
-            />
-          </div>
-
-          {/* Sound enabled */}
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <Volume2 className="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">Suoni e Segnali Acustici</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Beep a 3-2-1s e campana di fine riposo</p>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.soundEnabled}
-              onChange={(e) => updateSettings({ soundEnabled: e.target.checked })}
-              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
-            />
-          </div>
-
-          {/* Vibration */}
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <Vibrate className="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">Vibrazione</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Feedback tattile al tocco e termine timer</p>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.vibrationEnabled}
-              onChange={(e) => updateSettings({ vibrationEnabled: e.target.checked })}
-              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
-            />
-          </div>
-
-          {/* Keep screen awake (WakeLock) */}
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">Schermo sempre attivo</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Evita che il telefono vada in standby durante l'allenamento</p>
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.wakeLockEnabled}
-              onChange={(e) => updateSettings({ wakeLockEnabled: e.target.checked })}
-              className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
-            />
           </div>
         </div>
 
