@@ -12,7 +12,7 @@ import type {
 } from '../types';
 import { DEFAULT_WORKOUTS } from '../data/defaultWorkouts';
 import { playCountdownBeep, playRestFinishedChime, playSetDoneSound } from '../utils/audio';
-import { api, getStoredToken, getStoredUser } from '../utils/apiClient';
+import { api, getStoredToken, getStoredUser, getServerNow } from '../utils/apiClient';
 import {
   scheduleTimerNotification,
   cancelTimerNotification,
@@ -876,7 +876,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Workout Session Start/Finish
   const startWorkout = () => {
-    const startTime = Date.now();
+    const startTime = getServerNow();
     setIsWorkoutActive(true);
     setWorkoutStartTime(startTime);
 
@@ -965,7 +965,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const finishWorkout = () => {
-    const endTime = Date.now();
+    const endTime = getServerNow();
     const durationSeconds = workoutStartTime ? Math.round((endTime - workoutStartTime) / 1000) : 0;
 
     let totalVolume = 0;

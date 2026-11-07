@@ -45,6 +45,22 @@ export function setStoredUser(user: AuthUser | null) {
   }
 }
 
+let serverClockOffset = 0;
+
+export function updateServerClockOffset(serverTime: number) {
+  if (typeof serverTime === 'number' && !Number.isNaN(serverTime)) {
+    serverClockOffset = serverTime - Date.now();
+  }
+}
+
+export function getServerNow(): number {
+  return Date.now() + serverClockOffset;
+}
+
+export function getServerClockOffset(): number {
+  return serverClockOffset;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<{
   data?: T;
   error?: string;
@@ -68,6 +84,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<{
     let json: Record<string, unknown> = {};
     try {
       json = await res.json();
+      if (typeof json.serverTime === 'number') {
+        updateServerClockOffset(json.serverTime);
+      }
     } catch {
       // not JSON
     }

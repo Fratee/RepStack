@@ -47,7 +47,11 @@ export async function readJsonBody(req) {
 
 // Helper to send JSON responses
 export function sendJson(res, statusCode, data, extraHeaders = {}) {
-  const payload = JSON.stringify(data);
+  const payloadObj =
+    typeof data === 'object' && data !== null
+      ? { serverTime: Date.now(), ...data }
+      : data;
+  const payload = JSON.stringify(payloadObj);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(payload),

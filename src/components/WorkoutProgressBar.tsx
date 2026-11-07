@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, RotateCcw, Flame, X } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
+import { getServerNow } from '../utils/apiClient';
 
 export const WorkoutProgressBar: React.FC = () => {
   const {
@@ -24,7 +25,7 @@ export const WorkoutProgressBar: React.FC = () => {
     }
 
     const update = () => {
-      setElapsedSeconds(Math.floor((Date.now() - workoutStartTime) / 1000));
+      setElapsedSeconds(Math.max(0, Math.floor((getServerNow() - workoutStartTime) / 1000)));
     };
 
     update();
