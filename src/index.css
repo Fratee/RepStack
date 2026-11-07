@@ -203,8 +203,10 @@ html[data-accent="amber"] {
 
 /* WCAG Contrast Rule for Accent Buttons, Badges and Icons */
 .bg-emerald-500.text-slate-950,
+.bg-teal-500.text-slate-950,
 [class*="from-emerald-500"].text-slate-950,
 .bg-emerald-500 .text-slate-950,
+.bg-teal-500 .text-slate-950,
 [class*="from-emerald-500"] .text-slate-950,
 [class*="from-emerald-500"] svg.text-slate-950,
 .text-accent-contrast {
@@ -212,7 +214,8 @@ html[data-accent="amber"] {
 }
 
 [class*="from-emerald-500"] .border-slate-950,
-.bg-emerald-500 .border-slate-950 {
+.bg-emerald-500 .border-slate-950,
+.bg-teal-500 .border-slate-950 {
   border-color: var(--color-accent-text, #020617) !important;
   border-top-color: transparent !important;
 }
