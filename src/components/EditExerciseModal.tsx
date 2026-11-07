@@ -275,7 +275,7 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
               onClick={handleSave}
               className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition cursor-pointer"
             >
-              Salva Modifiche
+              Salva
             </button>
           </div>
         </div>
