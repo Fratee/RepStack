@@ -131,16 +131,6 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose, onO
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-            <span className="flex items-center gap-1.5 font-medium">
-              <HardDrive className="w-4 h-4 text-cyan-500" />
-              Database server:
-            </span>
-            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
-              SQLite (WAL mode)
-            </span>
-          </div>
-
           <div className="pt-1.5 border-t border-slate-200 dark:border-slate-700/50 flex items-start gap-2 text-slate-500 dark:text-slate-400 text-[11px]">
             <Shield className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
             <span>

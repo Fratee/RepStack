@@ -263,7 +263,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }`}
               >
                 <Sun className={`w-3.5 h-3.5 ${!isDarkMode ? 'text-amber-500' : ''}`} />
-                <span>Chiaro (White)</span>
+                <span>Chiaro</span>
               </button>
 
               <button
@@ -276,7 +276,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }`}
               >
                 <Moon className={`w-3.5 h-3.5 ${isDarkMode ? 'text-indigo-400' : ''}`} />
-                <span>Scuro (Dark)</span>
+                <span>Scuro</span>
               </button>
             </div>
           </div>

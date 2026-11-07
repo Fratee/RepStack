@@ -44,7 +44,6 @@ export const QuickTimerModal: React.FC<QuickTimerModalProps> = ({ isOpen, onClos
             </div>
             <div>
               <h3 className="font-bold text-slate-900 dark:text-white text-base">Timer Rapido</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Notifica inviata anche allo smartwatch</p>
             </div>
           </div>
           <button
