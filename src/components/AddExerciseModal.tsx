@@ -15,6 +15,7 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
   const [targetReps, setTargetReps] = useState('10');
   const [restSeconds, setRestSeconds] = useState(90);
   const [notes, setNotes] = useState('');
+  const [machineSetting, setMachineSetting] = useState('');
 
   if (!isOpen) return null;
 
@@ -39,16 +40,20 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
       completed: false,
     }));
 
+    const parsedSetting = machineSetting.trim() === '' ? undefined : parseFloat(machineSetting.trim());
+
     addExercise(currentDayId, {
       name: name.trim(),
       category: 'chest',
       defaultRestSeconds: restSeconds,
       notes: notes.trim(),
+      machineSetting: parsedSetting !== undefined && !Number.isNaN(parsedSetting) ? parsedSetting : undefined,
       sets,
     });
 
     setName('');
     setNotes('');
+    setMachineSetting('');
     onClose();
   };
 
@@ -136,6 +141,25 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Impostazione Macchina (opzionale)
+              </label>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                Posizione sedile / perno
+              </span>
+            </div>
+            <input
+              type="number"
+              step="any"
+              placeholder="es. 4"
+              value={machineSetting}
+              onChange={(e) => setMachineSetting(e.target.value)}
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold font-mono text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+            />
           </div>
 
           <div>

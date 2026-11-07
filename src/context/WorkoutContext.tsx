@@ -38,6 +38,7 @@ interface WorkoutContextType {
   addExercise: (dayId: string, exercise: Omit<Exercise, 'id'>) => void;
   updateExercise: (dayId: string, exercise: Exercise) => void;
   deleteExercise: (dayId: string, exerciseId: string) => void;
+  setExerciseMachineSetting: (exerciseId: string, machineSetting?: number | null) => void;
   resetToDefaultWorkouts: () => void;
   
   // Timer
@@ -974,6 +975,28 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
   };
 
+  const setExerciseMachineSetting = (exerciseId: string, machineSetting?: number | null) => {
+    setWorkouts((prev) =>
+      prev.map((day) => {
+        if (day.id !== currentDayId) return day;
+        return {
+          ...day,
+          exercises: day.exercises.map((ex) => {
+            if (ex.id !== exerciseId) return ex;
+            const valid =
+              machineSetting !== undefined && machineSetting !== null && !Number.isNaN(machineSetting)
+                ? machineSetting
+                : undefined;
+            return {
+              ...ex,
+              machineSetting: valid,
+            };
+          }),
+        };
+      })
+    );
+  };
+
   const resetToDefaultWorkouts = () => {
     setWorkouts(DEFAULT_WORKOUTS);
     localStorage.removeItem(STORAGE_KEY_WORKOUTS);
@@ -1139,6 +1162,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addExercise,
         updateExercise,
         deleteExercise,
+        setExerciseMachineSetting,
         resetToDefaultWorkouts,
 
         timer,

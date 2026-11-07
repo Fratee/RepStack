@@ -16,6 +16,7 @@ export interface Exercise {
   defaultRestSeconds: number; // in seconds, e.g. 120, 90, 60
   restOptions?: number[]; // e.g. [90, 120] for leg curl
   notes?: string;
+  machineSetting?: number; // Optional numerical machine setting (e.g. seat height, pin position, lever notch)
 }
 
 export interface WorkoutDay {

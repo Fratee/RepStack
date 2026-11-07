@@ -31,6 +31,7 @@ export const DEFAULT_WORKOUTS: WorkoutDay[] = [
         category: 'legs',
         defaultRestSeconds: 120, // 1.5 / 2 minuti
         restOptions: [90, 120],
+        machineSetting: 3,
         notes: '4 serie da 10 ripetizioni con 1.5 o 2 min di riposo',
         sets: createDefaultSets(4, '10', 30),
       },
@@ -94,6 +95,7 @@ export const DEFAULT_WORKOUTS: WorkoutDay[] = [
         name: 'Row machine',
         category: 'back',
         defaultRestSeconds: 90, // 1.5 minuti
+        machineSetting: 4,
         notes: '4 serie da 10 ripetizioni con 1.5 min (90s) di riposo',
         sets: createDefaultSets(4, '10', 45),
       },
@@ -110,6 +112,7 @@ export const DEFAULT_WORKOUTS: WorkoutDay[] = [
         name: 'Leg Extension',
         category: 'legs',
         defaultRestSeconds: 90, // 1.5 minuti
+        machineSetting: 5,
         notes: '4 serie da 10 ripetizioni con 1.5 min (90s) di riposo',
         sets: createDefaultSets(4, '10', 35),
       },
