@@ -753,6 +753,24 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsWorkoutActive(false);
     setWorkoutStartTime(null);
     stopTimer();
+
+    // Reset sets completed status for next time, but keep custom weights & reps!
+    setWorkouts((prevWorkouts) =>
+      prevWorkouts.map((w) => {
+        if (w.id !== currentDayId) return w;
+        return {
+          ...w,
+          exercises: w.exercises.map((ex) => ({
+            ...ex,
+            sets: ex.sets.map((s) => ({
+              ...s,
+              completed: false,
+              completedAt: undefined,
+            })),
+          })),
+        };
+      })
+    );
   };
 
   const finishWorkout = () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, RotateCcw, Flame } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Flame, X } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
 
 export const WorkoutProgressBar: React.FC = () => {
@@ -14,6 +14,7 @@ export const WorkoutProgressBar: React.FC = () => {
   } = useWorkout();
 
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [confirmAction, setConfirmAction] = useState<'finish' | 'cancel' | null>(null);
 
   useEffect(() => {
     if (!isWorkoutActive || !workoutStartTime) {
@@ -67,7 +68,7 @@ export const WorkoutProgressBar: React.FC = () => {
           {isWorkoutActive ? (
             <>
               <button
-                onClick={finishWorkout}
+                onClick={() => setConfirmAction('finish')}
                 className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
@@ -75,7 +76,7 @@ export const WorkoutProgressBar: React.FC = () => {
               </button>
 
               <button
-                onClick={cancelWorkout}
+                onClick={() => setConfirmAction('cancel')}
                 className="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer"
                 title="Ricomincia / Annulla"
               >
@@ -101,6 +102,87 @@ export const WorkoutProgressBar: React.FC = () => {
           style={{ width: `${percentage}%` }}
         />
       </div>
+
+      {/* Confirmation Dialog Modal */}
+      {confirmAction && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setConfirmAction(null)}
+        >
+          <div
+            className="relative w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setConfirmAction(null)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {confirmAction === 'finish' ? (
+              <div className="flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-4">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                  Terminare il Workout?
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+                  Hai completato <strong className="text-emerald-600 dark:text-emerald-400">{totalSetsCompletedInDay} di {totalSetsInDay}</strong> serie ({percentage}%).
+                  La sessione verrà salvata nella cronologia e le serie completate verranno azzerate.
+                </p>
+                <div className="flex items-center gap-3 w-full">
+                  <button
+                    onClick={() => setConfirmAction(null)}
+                    className="flex-1 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm transition cursor-pointer"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    onClick={() => {
+                      finishWorkout();
+                      setConfirmAction(null);
+                    }}
+                    className="flex-1 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+                  >
+                    Termina
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-4">
+                  <RotateCcw className="w-7 h-7" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                  Ricominciare l'Allenamento?
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+                  Il timer e tutte le serie completate verranno azzerati come a fine workout. Nessun dato verrà salvato nella cronologia.
+                </p>
+                <div className="flex items-center gap-3 w-full">
+                  <button
+                    onClick={() => setConfirmAction(null)}
+                    className="flex-1 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm transition cursor-pointer"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    onClick={() => {
+                      cancelWorkout();
+                      setConfirmAction(null);
+                    }}
+                    className="flex-1 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition cursor-pointer"
+                  >
+                    Ricomincia
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
