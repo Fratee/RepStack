@@ -39,6 +39,11 @@ interface WorkoutContextType {
   updateExercise: (dayId: string, exercise: Exercise) => void;
   deleteExercise: (dayId: string, exerciseId: string) => void;
   setExerciseMachineSetting: (exerciseId: string, machineSetting?: number | null) => void;
+  updateWorkoutDay: (dayId: string, updates: { title?: string; subtitle?: string }) => void;
+  addWorkoutDay: (title?: string, subtitle?: string) => string;
+  deleteWorkoutDay: (dayId: string) => void;
+  moveExercise: (dayId: string, exerciseIndex: number, direction: 'up' | 'down') => void;
+  reorderExercises: (dayId: string, newExercises: Exercise[]) => void;
   resetToDefaultWorkouts: () => void;
   
   // Timer
@@ -997,6 +1002,66 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
   };
 
+  const updateWorkoutDay = (dayId: string, updates: { title?: string; subtitle?: string }) => {
+    setWorkouts((prev) =>
+      prev.map((day) =>
+        day.id === dayId
+          ? {
+              ...day,
+              title: updates.title !== undefined ? updates.title.trim() || day.title : day.title,
+              subtitle: updates.subtitle !== undefined ? updates.subtitle.trim() : day.subtitle,
+            }
+          : day
+      )
+    );
+  };
+
+  const addWorkoutDay = (title?: string, subtitle = '') => {
+    const nextNum = workouts.length + 1;
+    const newId = `day-${Date.now()}`;
+    const newDay: WorkoutDay = {
+      id: newId,
+      title: title?.trim() || `Giorno ${nextNum}`,
+      subtitle: subtitle.trim(),
+      exercises: [],
+    };
+    setWorkouts((prev) => [...prev, newDay]);
+    setCurrentDayId(newId);
+    return newId;
+  };
+
+  const deleteWorkoutDay = (dayId: string) => {
+    if (workouts.length <= 1) return;
+    setWorkouts((prev) => {
+      const filtered = prev.filter((d) => d.id !== dayId);
+      if (currentDayId === dayId && filtered.length > 0) {
+        setCurrentDayId(filtered[0].id);
+      }
+      return filtered;
+    });
+  };
+
+  const moveExercise = (dayId: string, exerciseIndex: number, direction: 'up' | 'down') => {
+    setWorkouts((prev) =>
+      prev.map((day) => {
+        if (day.id !== dayId) return day;
+        const targetIdx = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
+        if (targetIdx < 0 || targetIdx >= day.exercises.length) return day;
+        const newExercises = [...day.exercises];
+        const temp = newExercises[exerciseIndex];
+        newExercises[exerciseIndex] = newExercises[targetIdx];
+        newExercises[targetIdx] = temp;
+        return { ...day, exercises: newExercises };
+      })
+    );
+  };
+
+  const reorderExercises = (dayId: string, newExercises: Exercise[]) => {
+    setWorkouts((prev) =>
+      prev.map((day) => (day.id === dayId ? { ...day, exercises: newExercises } : day))
+    );
+  };
+
   const resetToDefaultWorkouts = () => {
     setWorkouts(DEFAULT_WORKOUTS);
     localStorage.removeItem(STORAGE_KEY_WORKOUTS);
@@ -1163,6 +1228,11 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updateExercise,
         deleteExercise,
         setExerciseMachineSetting,
+        updateWorkoutDay,
+        addWorkoutDay,
+        deleteWorkoutDay,
+        moveExercise,
+        reorderExercises,
         resetToDefaultWorkouts,
 
         timer,

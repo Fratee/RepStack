@@ -126,22 +126,22 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Days Switcher Tabs */}
-        <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800/80">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800/80 overflow-x-auto no-scrollbar">
           {workouts.map((day) => {
             const isActive = day.id === currentDayId;
             return (
               <button
                 key={day.id}
                 onClick={() => setCurrentDayId(day.id)}
-                className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/20'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800/50'
                 }`}
               >
-                <span>{day.title}</span>
+                <span className="truncate max-w-[130px]">{day.title}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                  className={`text-[10px] px-1.5 py-0.2 rounded-md shrink-0 ${
                     isActive ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                   }`}
                 >
