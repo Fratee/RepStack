@@ -1,0 +1,253 @@
+import React, { useState } from 'react';
+import { Check, Timer, Edit3, Clock, Plus, Minus } from 'lucide-react';
+import type { Exercise } from '../types';
+import { useWorkout } from '../context/WorkoutContext';
+import { WeightSpinModal } from './WeightSpinModal';
+
+interface ExerciseCardProps {
+  exercise: Exercise;
+  index: number;
+  onEdit: (exercise: Exercise) => void;
+}
+
+export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onEdit }) => {
+  const {
+    toggleSetCompleted,
+    updateSet,
+    setExerciseSetWeight,
+    changeExerciseRest,
+    startTimer,
+    setIsTimerModalOpen,
+  } = useWorkout();
+
+  const [weightModalSet, setWeightModalSet] = useState<{
+    id: string;
+    setNumber: number;
+    weightKg: number;
+  } | null>(null);
+
+  const completedSetsCount = exercise.sets.filter((s) => s.completed).length;
+  const isAllCompleted = completedSetsCount === exercise.sets.length && exercise.sets.length > 0;
+
+  const handleStartTimer = (seconds?: number) => {
+    const rest = seconds || exercise.defaultRestSeconds;
+    startTimer(rest, exercise.name);
+    setIsTimerModalOpen(true);
+  };
+
+  const formatRest = (sec: number) => {
+    if (sec % 60 === 0) return `${sec / 60}m`;
+    return `${Math.floor(sec / 60)}.${(sec % 60) === 30 ? '5' : ''}m`;
+  };
+
+  return (
+    <div
+      className={`rounded-3xl border transition-all duration-300 overflow-hidden ${
+        isAllCompleted
+          ? 'bg-emerald-500/5 dark:bg-slate-900/60 border-emerald-500/40 dark:border-emerald-500/30 shadow-md shadow-emerald-500/5'
+          : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 shadow-sm dark:shadow-none'
+      }`}
+    >
+      {/* Exercise Header */}
+      <div className="p-4 sm:p-5 pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <span className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-700/60">
+              {index + 1}
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight flex items-center gap-2">
+                <span className="truncate">{exercise.name}</span>
+                {isAllCompleted && (
+                  <span className="shrink-0 text-emerald-600 dark:text-emerald-400 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold">
+                    Completato
+                  </span>
+                )}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {exercise.sets.length} serie × {exercise.sets[0]?.targetReps || '8'} rip
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Timer & Edit */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => handleStartTimer()}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700/60 transition flex items-center gap-1 text-xs cursor-pointer"
+              title={`Avvia timer riposo (${exercise.defaultRestSeconds}s)`}
+            >
+              <Timer className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+              <span className="font-mono font-medium hidden sm:inline">{formatRest(exercise.defaultRestSeconds)}</span>
+            </button>
+
+            <button
+              onClick={() => onEdit(exercise)}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer"
+              title="Modifica esercizio"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Rest selector pills */}
+        <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/60">
+          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500" /> Recupero:
+          </span>
+
+          {exercise.restOptions && exercise.restOptions.length > 0 ? (
+            exercise.restOptions.map((optSec) => (
+              <button
+                key={optSec}
+                onClick={() => changeExerciseRest(exercise.id, optSec)}
+                className={`text-xs px-2.5 py-1 rounded-lg font-medium transition cursor-pointer ${
+                  exercise.defaultRestSeconds === optSec
+                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm shadow-emerald-500/20'
+                    : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {optSec === 90 ? '1.5 min (90s)' : `${optSec / 60} min (${optSec}s)`}
+              </button>
+            ))
+          ) : (
+            <span className="text-xs px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800/90 text-emerald-600 dark:text-emerald-400 font-medium">
+              {formatRest(exercise.defaultRestSeconds)} ({exercise.defaultRestSeconds}s)
+            </span>
+          )}
+
+          {exercise.notes && (
+            <span className="text-[11px] text-slate-400 dark:text-slate-400 italic ml-auto hidden sm:inline truncate max-w-[200px]">
+              {exercise.notes}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Sets Table */}
+      <div className="px-4 pb-4">
+        <div className="bg-slate-50/80 dark:bg-slate-950/40 rounded-2xl border border-slate-200 dark:border-slate-800/80 p-2 sm:p-3">
+          <div className="grid grid-cols-12 gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 pb-2 border-b border-slate-200 dark:border-slate-800/60">
+            <div className="col-span-2 text-center">Set</div>
+            <div className="col-span-4 text-center">Peso (Kg)</div>
+            <div className="col-span-3 text-center">Reps</div>
+            <div className="col-span-3 text-center">Fatto</div>
+          </div>
+
+          <div className="divide-y divide-slate-200/80 dark:divide-slate-800/40">
+            {exercise.sets.map((set) => (
+              <div
+                key={set.id}
+                className={`grid grid-cols-12 gap-2 items-center py-2 px-1 rounded-xl transition ${
+                  set.completed ? 'bg-emerald-500/10 dark:bg-emerald-500/5' : ''
+                }`}
+              >
+                {/* Set number */}
+                <div className="col-span-2 text-center font-mono font-bold text-sm text-slate-700 dark:text-slate-300">
+                  {set.setNumber}
+                </div>
+
+                {/* Weight 3D Wheel Trigger Button */}
+                <div className="col-span-4 flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Start from current set weight; if 0, inherit previous set's weight so user doesn't start from 0
+                      let initialVal = set.weightKg || 0;
+                      if (initialVal === 0) {
+                        const prevWithWeight = exercise.sets
+                          .slice(0, set.setNumber - 1)
+                          .reverse()
+                          .find((s) => (s.weightKg || 0) > 0);
+                        if (prevWithWeight && prevWithWeight.weightKg) {
+                          initialVal = prevWithWeight.weightKg;
+                        } else if (exercise.sets[0]?.weightKg) {
+                          initialVal = exercise.sets[0].weightKg;
+                        }
+                      }
+
+                      setWeightModalSet({
+                        id: set.id,
+                        setNumber: set.setNumber,
+                        weightKg: initialVal,
+                      });
+                    }}
+                    className="w-full max-w-[96px] h-9 px-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-300 dark:border-slate-700/80 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-xl font-mono text-sm font-black text-slate-900 dark:text-white flex items-center justify-center gap-1 shadow-xs hover:shadow-emerald-500/10 active:scale-95 transition cursor-pointer group"
+                    title="Tocca per aprire la rotella 3D e impostare il peso"
+                  >
+                    <span>{set.weightKg || 0}</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition">
+                      kg
+                    </span>
+                  </button>
+                </div>
+
+                {/* Reps Stepper & Input */}
+                <div className="col-span-3 flex items-center justify-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateSet(exercise.id, set.id, { actualReps: Math.max(1, (set.actualReps || 1) - 1) })
+                    }
+                    className="w-6 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-400 flex items-center justify-center font-bold text-xs"
+                    title="-1 rip"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <input
+                    type="number"
+                    value={set.actualReps}
+                    onChange={(e) =>
+                      updateSet(exercise.id, set.id, { actualReps: parseInt(e.target.value, 10) || 0 })
+                    }
+                    className="w-10 h-8 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-lg text-center font-mono text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateSet(exercise.id, set.id, { actualReps: (set.actualReps || 0) + 1 })
+                    }
+                    className="w-6 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-400 flex items-center justify-center font-bold text-xs"
+                    title="+1 rip"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+
+                {/* Completed Checkmark Button */}
+                <div className="col-span-3 flex items-center justify-center">
+                  <button
+                    onClick={() => toggleSetCompleted(exercise.id, set.id)}
+                    className={`w-10 h-8 rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+                      set.completed
+                        ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 scale-105'
+                        : 'bg-slate-100 dark:bg-slate-800/90 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60'
+                    }`}
+                  >
+                    <Check className={`w-4 h-4 stroke-[3] ${set.completed ? 'text-slate-950' : ''}`} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Weight Spinning / Dialing Modal */}
+      {weightModalSet && (
+        <WeightSpinModal
+          isOpen={!!weightModalSet}
+          onClose={() => setWeightModalSet(null)}
+          exerciseName={exercise.name}
+          setNumber={weightModalSet.setNumber}
+          totalSets={exercise.sets.length}
+          initialWeight={weightModalSet.weightKg}
+          onSave={(newWeight, applyToFollowing) => {
+            setExerciseSetWeight(exercise.id, weightModalSet.id, newWeight, applyToFollowing);
+          }}
+        />
+      )}
+    </div>
+  );
+};

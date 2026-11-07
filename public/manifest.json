@@ -1,0 +1,67 @@
+{
+  "name": "GymTimer Pro - Scheda & Timer Riposo",
+  "short_name": "GymTimer",
+  "description": "App per allenamento in palestra con timer riposo personalizzato e notifiche per smartwatch",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0b0f17",
+  "theme_color": "#0b0f17",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["fitness", "health", "sports"],
+  "shortcuts": [
+    {
+      "name": "Giorno 1",
+      "short_name": "Giorno 1",
+      "description": "Squat, Leg curl, Trazioni, Spinte, Aperture, Addome",
+      "url": "/?day=1",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Giorno 2",
+      "short_name": "Giorno 2",
+      "description": "Panca piana, Alzate, Row, Stacchi, Leg Ext, Polpacci",
+      "url": "/?day=2",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
+
