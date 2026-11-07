@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Timer, Edit3, Clock, Plus, Minus, X } from 'lucide-react';
+import { Check, Edit3, Clock, Plus, Minus, X } from 'lucide-react';
 import type { Exercise } from '../types';
 import { useWorkout } from '../context/WorkoutContext';
 import { WeightSpinModal } from './WeightSpinModal';
@@ -94,30 +94,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
               </div>
             </div>
           </div>
-
-          {/* Quick Timer & Edit */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              onClick={() => handleStartTimer()}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700/60 transition flex items-center gap-1 text-xs cursor-pointer"
-              title={`Avvia timer riposo (${exercise.defaultRestSeconds}s)`}
-            >
-              <Timer className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span className="font-mono font-medium hidden sm:inline">{formatRest(exercise.defaultRestSeconds)}</span>
-            </button>
-
-            <button
-              onClick={() => onEdit(exercise)}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer"
-              title="Modifica esercizio"
-            >
-              <Edit3 className="w-4 h-4" />
-            </button>
-          </div>
         </div>
 
-        {/* Rest Info */}
-        <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/60">
+        {/* Rest Info, Quick Timer & Edit */}
+        <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/60">
           <button
             type="button"
             onClick={() => handleStartTimer()}
@@ -125,7 +105,22 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
             title={`Avvia timer riposo (${exercise.defaultRestSeconds}s)`}
           >
             <Clock className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition" />
-            <span>Recupero: <strong className="font-mono text-slate-900 dark:text-white font-bold">{formatRest(exercise.defaultRestSeconds)}</strong> ({exercise.defaultRestSeconds}s)</span>
+            <span>
+              Recupero:{' '}
+              <strong className="font-mono text-slate-900 dark:text-white font-bold">
+                {formatRest(exercise.defaultRestSeconds)}
+              </strong>{' '}
+              ({exercise.defaultRestSeconds}s)
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onEdit(exercise)}
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition cursor-pointer"
+            title="Modifica esercizio"
+          >
+            <Edit3 className="w-4 h-4" />
           </button>
         </div>
       </div>
