@@ -54,6 +54,16 @@ export interface TimerState {
   totalSets?: number;
 }
 
+export type AccentColor =
+  | 'emerald'
+  | 'blue'
+  | 'cyan'
+  | 'purple'
+  | 'rose'
+  | 'red'
+  | 'orange'
+  | 'amber';
+
 export interface AppSettings {
   autoStartTimer: boolean;
   soundEnabled: boolean;
@@ -62,6 +72,7 @@ export interface AppSettings {
   wakeLockEnabled: boolean;
   compactTimer: boolean;
   theme: 'dark' | 'light';
+  accentColor?: AccentColor;
 }
 
 export interface AuthUser {

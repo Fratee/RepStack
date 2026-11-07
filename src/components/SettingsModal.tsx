@@ -17,8 +17,11 @@ import {
   Cloud,
   User,
   RefreshCw,
+  Palette,
+  Check,
 } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
+import { ACCENT_COLORS } from '../utils/accentColors';
 import {
   getNotificationDiagnostics,
   requestNotificationPermission,
@@ -278,6 +281,51 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <Moon className={`w-3.5 h-3.5 ${isDarkMode ? 'text-indigo-400' : ''}`} />
                 <span>Scuro</span>
               </button>
+            </div>
+          </div>
+
+          {/* Accent Color Customization */}
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                  <Palette className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Colore di Accento</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Personalizza bottoni, progressi e dettagli dell'interfaccia
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2 pt-1">
+              {ACCENT_COLORS.map((c) => {
+                const isSelected = (settings.accentColor || 'emerald') === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => updateSettings({ accentColor: c.id })}
+                    className={`p-2.5 rounded-2xl border transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
+                      isSelected
+                        ? 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/30'
+                        : 'border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900/60 hover:border-slate-300 dark:hover:border-slate-700'
+                    }`}
+                  >
+                    <span
+                      className="w-7 h-7 rounded-full shadow-sm flex items-center justify-center text-white"
+                      style={{ backgroundColor: c.hex }}
+                    >
+                      {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+                    </span>
+                    <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200 truncate max-w-full">
+                      {c.label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

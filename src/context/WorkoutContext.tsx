@@ -109,6 +109,7 @@ const defaultSettings: AppSettings = {
   wakeLockEnabled: true,
   compactTimer: false,
   theme: 'dark',
+  accentColor: 'emerald',
 };
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
@@ -542,7 +543,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, []);
 
-  // Theme HTML class and theme-color sync
+  // Theme HTML class, data-accent and theme-color sync
   useEffect(() => {
     const root = document.documentElement;
     const isDark = settings.theme !== 'light';
@@ -554,11 +555,14 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
       root.classList.add('light');
     }
 
+    const accent = settings.accentColor || 'emerald';
+    root.setAttribute('data-accent', accent);
+
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
       metaTheme.setAttribute('content', isDark ? '#070a11' : '#f8fafc');
     }
-  }, [settings.theme]);
+  }, [settings.theme, settings.accentColor]);
 
   // Screen Wake Lock sync
   useEffect(() => {
@@ -1180,7 +1184,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         displayName,
         initialWorkouts: saveCurrentData ? workouts : undefined,
         initialHistory: saveCurrentData ? history : undefined,
-        initialSettings: saveCurrentData ? settings : undefined,
+        initialSettings: saveCurrentData ? settings : { accentColor: settings.accentColor },
         initialDayId: currentDayId,
       });
 

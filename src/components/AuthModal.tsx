@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, User, Lock, UserPlus, LogIn, Cloud, ShieldCheck, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { X, User, Lock, UserPlus, LogIn, Cloud, ShieldCheck, AlertCircle, Eye, EyeOff, Palette, Check } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
+import { ACCENT_COLORS } from '../utils/accentColors';
+import type { AccentColor } from '../types';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -13,7 +15,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   defaultMode = 'login',
 }) => {
-  const { login, registerUser } = useWorkout();
+  const { login, registerUser, settings, updateSettings } = useWorkout();
 
   const [mode, setMode] = useState<'login' | 'register'>(defaultMode);
   const [username, setUsername] = useState('');
@@ -21,12 +23,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [saveCurrentData, setSaveCurrentData] = useState(true);
+  const [selectedAccent, setSelectedAccent] = useState<AccentColor>(settings.accentColor || 'emerald');
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  const handleSelectAccent = (color: AccentColor) => {
+    setSelectedAccent(color);
+    updateSettings({ accentColor: color });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
-      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors duration-200 max-h-[92vh] overflow-y-auto">
         {/* Top Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
@@ -235,6 +243,43 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               />
               <span>Salva su questo account i miei carichi ed esercizi attuali</span>
             </label>
+          )}
+
+          {/* Accent Color Selection during Registration */}
+          {mode === 'register' && (
+            <div className="pt-1">
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                <Palette className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Colore di Accento (Personalizza Tema)</span>
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {ACCENT_COLORS.map((c) => {
+                  const isSelected = selectedAccent === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => handleSelectAccent(c.id)}
+                      className={`p-2 rounded-2xl border transition-all flex flex-col items-center gap-1 cursor-pointer ${
+                        isSelected
+                          ? 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/30'
+                          : 'border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700'
+                      }`}
+                    >
+                      <span
+                        className="w-6 h-6 rounded-full shadow-sm flex items-center justify-center text-white"
+                        style={{ backgroundColor: c.hex }}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </span>
+                      <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 truncate max-w-full">
+                        {c.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           {/* Submit Button */}

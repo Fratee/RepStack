@@ -1,9 +1,16 @@
 <!doctype html>
-<html lang="it" class="dark">
+<html lang="it" class="dark" data-accent="emerald">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>GymTimer Pro - Scheda & Timer Riposo</title>
+    <script>
+      try {
+        const s = JSON.parse(localStorage.getItem('gym_settings_v1') || '{}');
+        if (s.accentColor) document.documentElement.setAttribute('data-accent', s.accentColor);
+        if (s.theme === 'light') document.documentElement.classList.replace('dark', 'light');
+      } catch (e) {}
+    </script>
     
     <!-- PWA Settings -->
     <link rel="manifest" href="/manifest.json" />
