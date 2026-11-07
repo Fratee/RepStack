@@ -292,7 +292,7 @@ export async function handleApiRequest(req, res) {
         workouts: Array.isArray(workouts) ? workouts : [],
         history: Array.isArray(history) ? history : [],
         settings: settings || {},
-        activeSession: activeSession || null,
+        activeSession: (activeSession && activeSession.isActive) ? activeSession : null,
         currentDayId: currentDayId || 'day1',
       });
 

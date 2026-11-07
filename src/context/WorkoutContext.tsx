@@ -295,7 +295,15 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // 6. User Auth & Server Sync State
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(() => (getStoredToken() ? 'syncing' : 'guest'));
-  const [lastSyncTime, setLastSyncTime] = useState<number | null>(null);
+  const [lastSyncTime, setLastSyncTimeState] = useState<number | null>(null);
+  const lastSyncTimeRef = useRef<number | null>(null);
+  const isRemoteUpdateRef = useRef<boolean>(false);
+
+  const setLastSyncTime = useCallback((t: number | null) => {
+    lastSyncTimeRef.current = t;
+    setLastSyncTimeState(t);
+  }, []);
+
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
@@ -338,9 +346,24 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
             if (serverState.currentDayId) {
               setCurrentDayId(serverState.currentDayId);
             }
-            if (serverState.activeSession) {
-              setIsWorkoutActive(Boolean(serverState.activeSession.isActive));
-              setWorkoutStartTime(serverState.activeSession.startTime || null);
+            if (serverState.activeSession && serverState.activeSession.isActive) {
+              const ageMs = Date.now() - (serverState.activeSession.startTime || 0);
+              if (ageMs < 18 * 3600 * 1000) {
+                setIsWorkoutActive(true);
+                setWorkoutStartTime(serverState.activeSession.startTime || null);
+              } else {
+                setIsWorkoutActive(false);
+                setWorkoutStartTime(null);
+                try {
+                  localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+                } catch {}
+              }
+            } else {
+              setIsWorkoutActive(false);
+              setWorkoutStartTime(null);
+              try {
+                localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+              } catch {}
             }
             setLastSyncTime(serverState.updatedAt || Date.now());
             setSyncStatus('synced');
@@ -356,7 +379,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     initAuthAndSync();
-  }, []);
+  }, [setLastSyncTime]);
 
   // Auto-sync debounced to server when user is authenticated
   const syncTimeoutRef = useRef<number | null>(null);
@@ -370,11 +393,18 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     if (!user) return;
 
+    // Do not bounce back changes that were just pulled from the server
+    if (isRemoteUpdateRef.current) {
+      isRemoteUpdateRef.current = false;
+      return;
+    }
+
     if (syncTimeoutRef.current) {
       window.clearTimeout(syncTimeoutRef.current);
     }
 
     syncTimeoutRef.current = window.setTimeout(async () => {
+      syncTimeoutRef.current = null;
       setSyncStatus('syncing');
       try {
         const res = await api.syncState({
@@ -385,8 +415,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
           currentDayId,
         });
         if (res.data?.success) {
+          const updated = res.data.updatedAt || Date.now();
+          lastSyncTimeRef.current = updated;
+          setLastSyncTime(updated);
           setSyncStatus('synced');
-          setLastSyncTime(res.data.updatedAt || Date.now());
           setSyncError(null);
         } else {
           setSyncStatus(res.isOffline ? 'offline' : 'error');
@@ -402,7 +434,99 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         window.clearTimeout(syncTimeoutRef.current);
       }
     };
-  }, [workouts, history, settings, isWorkoutActive, workoutStartTime, currentDayId, user]);
+  }, [workouts, history, settings, isWorkoutActive, workoutStartTime, currentDayId, user, setLastSyncTime]);
+
+  // Cross-device background polling & visibility change listener
+  useEffect(() => {
+    if (!user) return;
+
+    let isPolling = false;
+
+    const pullServerState = async () => {
+      if (isPolling) return;
+      // If a local modification is pending sync on this device, don't interrupt
+      if (syncTimeoutRef.current) return;
+
+      isPolling = true;
+      try {
+        const res = await api.getState();
+        if (res.data?.state) {
+          const serverState = res.data.state;
+          const serverUpdated = serverState.updatedAt || 0;
+
+          // Only apply if server state is newer than our last sync
+          if (serverUpdated > (lastSyncTimeRef.current || 0)) {
+            isRemoteUpdateRef.current = true;
+
+            if (Array.isArray(serverState.workouts) && serverState.workouts.length > 0) {
+              setWorkouts(serverState.workouts);
+            }
+            if (Array.isArray(serverState.history)) {
+              setHistory(serverState.history);
+            }
+            if (serverState.settings && Object.keys(serverState.settings).length > 0) {
+              setSettings((prev) => ({ ...prev, ...serverState.settings }));
+            }
+            if (serverState.currentDayId) {
+              setCurrentDayId(serverState.currentDayId);
+            }
+
+            // Sync activeSession accurately
+            if (serverState.activeSession && serverState.activeSession.isActive) {
+              const ageMs = Date.now() - (serverState.activeSession.startTime || 0);
+              if (ageMs < 18 * 3600 * 1000) {
+                setIsWorkoutActive(true);
+                setWorkoutStartTime(serverState.activeSession.startTime || null);
+              } else {
+                setIsWorkoutActive(false);
+                setWorkoutStartTime(null);
+                try {
+                  localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+                } catch {}
+              }
+            } else {
+              setIsWorkoutActive(false);
+              setWorkoutStartTime(null);
+              try {
+                localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+              } catch {}
+            }
+
+            lastSyncTimeRef.current = serverUpdated;
+            setLastSyncTime(serverUpdated);
+            setSyncStatus('synced');
+            setSyncError(null);
+          }
+        }
+      } catch (err) {
+        // quiet fallback
+      } finally {
+        isPolling = false;
+      }
+    };
+
+    // 1. Check immediately when user switches tabs or unlocks screen
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        pullServerState();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', pullServerState);
+
+    // 2. Poll every 4 seconds when tab is visible
+    const pollInterval = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        pullServerState();
+      }
+    }, 4000);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', pullServerState);
+      window.clearInterval(pollInterval);
+    };
+  }, [user, setLastSyncTime]);
 
   // Sync workouts to localStorage
   useEffect(() => {
@@ -752,8 +876,42 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Workout Session Start/Finish
   const startWorkout = () => {
+    const startTime = Date.now();
     setIsWorkoutActive(true);
-    setWorkoutStartTime(Date.now());
+    setWorkoutStartTime(startTime);
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY_ACTIVE_SESSION,
+        JSON.stringify({
+          isActive: true,
+          startTime,
+          dayId: currentDayId,
+        })
+      );
+    } catch {}
+
+    if (user) {
+      if (syncTimeoutRef.current) {
+        window.clearTimeout(syncTimeoutRef.current);
+        syncTimeoutRef.current = null;
+      }
+      api.syncState({
+        workouts,
+        history,
+        settings,
+        activeSession: { isActive: true, startTime, dayId: currentDayId },
+        currentDayId,
+      }).then((res) => {
+        if (res.data?.success) {
+          const updated = res.data.updatedAt || Date.now();
+          lastSyncTimeRef.current = updated;
+          setLastSyncTime(updated);
+          setSyncStatus('synced');
+          setSyncError(null);
+        }
+      }).catch((e) => console.warn('Start workout sync error:', e));
+    }
   };
 
   const cancelWorkout = () => {
@@ -761,23 +919,49 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setWorkoutStartTime(null);
     stopTimer();
 
+    try {
+      localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+    } catch {}
+
     // Reset sets completed status for next time, but keep custom weights & reps!
-    setWorkouts((prevWorkouts) =>
-      prevWorkouts.map((w) => {
-        if (w.id !== currentDayId) return w;
-        return {
-          ...w,
-          exercises: w.exercises.map((ex) => ({
-            ...ex,
-            sets: ex.sets.map((s) => ({
-              ...s,
-              completed: false,
-              completedAt: undefined,
-            })),
+    const nextWorkouts = workouts.map((w) => {
+      if (w.id !== currentDayId) return w;
+      return {
+        ...w,
+        exercises: w.exercises.map((ex) => ({
+          ...ex,
+          sets: ex.sets.map((s) => ({
+            ...s,
+            completed: false,
+            completedAt: undefined,
           })),
-        };
-      })
-    );
+        })),
+      };
+    });
+    setWorkouts(nextWorkouts);
+
+    // Immediately push reset to server so other devices exit workout instantly
+    if (user) {
+      if (syncTimeoutRef.current) {
+        window.clearTimeout(syncTimeoutRef.current);
+        syncTimeoutRef.current = null;
+      }
+      api.syncState({
+        workouts: nextWorkouts,
+        history,
+        settings,
+        activeSession: null,
+        currentDayId,
+      }).then((res) => {
+        if (res.data?.success) {
+          const updated = res.data.updatedAt || Date.now();
+          lastSyncTimeRef.current = updated;
+          setLastSyncTime(updated);
+          setSyncStatus('synced');
+          setSyncError(null);
+        }
+      }).catch((e) => console.warn('Cancel workout sync error:', e));
+    }
   };
 
   const finishWorkout = () => {
@@ -814,7 +998,8 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
       exercisesSummary,
     };
 
-    setHistory((prev) => [newHistoryItem, ...prev]);
+    const nextHistory = [newHistoryItem, ...history];
+    setHistory(nextHistory);
 
     // Send immediately to server so workout is never lost even if cache wiped right after
     if (user) {
@@ -824,6 +1009,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsWorkoutActive(false);
     setWorkoutStartTime(null);
     stopTimer();
+
+    try {
+      localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+    } catch {}
 
     // Trigger celebration confetti
     try {
@@ -837,22 +1026,44 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     // Reset sets completed status for next time, but keep custom weights & reps!
-    setWorkouts((prevWorkouts) =>
-      prevWorkouts.map((w) => {
-        if (w.id !== currentDayId) return w;
-        return {
-          ...w,
-          exercises: w.exercises.map((ex) => ({
-            ...ex,
-            sets: ex.sets.map((s) => ({
-              ...s,
-              completed: false,
-              completedAt: undefined,
-            })),
+    const nextWorkouts = workouts.map((w) => {
+      if (w.id !== currentDayId) return w;
+      return {
+        ...w,
+        exercises: w.exercises.map((ex) => ({
+          ...ex,
+          sets: ex.sets.map((s) => ({
+            ...s,
+            completed: false,
+            completedAt: undefined,
           })),
-        };
-      })
-    );
+        })),
+      };
+    });
+    setWorkouts(nextWorkouts);
+
+    // Immediately push finish to server with activeSession: null
+    if (user) {
+      if (syncTimeoutRef.current) {
+        window.clearTimeout(syncTimeoutRef.current);
+        syncTimeoutRef.current = null;
+      }
+      api.syncState({
+        workouts: nextWorkouts,
+        history: nextHistory,
+        settings,
+        activeSession: null,
+        currentDayId,
+      }).then((res) => {
+        if (res.data?.success) {
+          const updated = res.data.updatedAt || Date.now();
+          lastSyncTimeRef.current = updated;
+          setLastSyncTime(updated);
+          setSyncStatus('synced');
+          setSyncError(null);
+        }
+      }).catch((e) => console.warn('Finish workout sync error:', e));
+    }
   };
 
   // Toggle single set completed
@@ -1156,9 +1367,30 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
           if (serverState.currentDayId) {
             setCurrentDayId(serverState.currentDayId);
           }
+          if (serverState.activeSession && serverState.activeSession.isActive) {
+            const ageMs = Date.now() - (serverState.activeSession.startTime || 0);
+            if (ageMs < 18 * 3600 * 1000) {
+              setIsWorkoutActive(true);
+              setWorkoutStartTime(serverState.activeSession.startTime || null);
+            } else {
+              setIsWorkoutActive(false);
+              setWorkoutStartTime(null);
+              try {
+                localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+              } catch {}
+            }
+          } else {
+            setIsWorkoutActive(false);
+            setWorkoutStartTime(null);
+            try {
+              localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+            } catch {}
+          }
         }
+        const updated = serverState?.updatedAt || Date.now();
+        lastSyncTimeRef.current = updated;
+        setLastSyncTime(updated);
         setSyncStatus('synced');
-        setLastSyncTime(Date.now());
         return { success: true };
       }
       setSyncStatus('guest');
@@ -1219,6 +1451,51 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     setSyncStatus('syncing');
     try {
+      // 1. Check if server has newer updates from another device
+      const stateRes = await api.getState();
+      if (stateRes.data?.state) {
+        const serverState = stateRes.data.state;
+        const serverUpdated = serverState.updatedAt || 0;
+        if (serverUpdated > (lastSyncTimeRef.current || 0)) {
+          isRemoteUpdateRef.current = true;
+          if (Array.isArray(serverState.workouts) && serverState.workouts.length > 0) {
+            setWorkouts(serverState.workouts);
+          }
+          if (Array.isArray(serverState.history)) {
+            setHistory(serverState.history);
+          }
+          if (serverState.settings && Object.keys(serverState.settings).length > 0) {
+            setSettings((prev) => ({ ...prev, ...serverState.settings }));
+          }
+          if (serverState.currentDayId) {
+            setCurrentDayId(serverState.currentDayId);
+          }
+          if (serverState.activeSession && serverState.activeSession.isActive) {
+            const ageMs = Date.now() - (serverState.activeSession.startTime || 0);
+            if (ageMs < 18 * 3600 * 1000) {
+              setIsWorkoutActive(true);
+              setWorkoutStartTime(serverState.activeSession.startTime || null);
+            } else {
+              setIsWorkoutActive(false);
+              setWorkoutStartTime(null);
+              try { localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION); } catch {}
+            }
+          } else {
+            setIsWorkoutActive(false);
+            setWorkoutStartTime(null);
+            try {
+              localStorage.removeItem(STORAGE_KEY_ACTIVE_SESSION);
+            } catch {}
+          }
+          lastSyncTimeRef.current = serverUpdated;
+          setLastSyncTime(serverUpdated);
+          setSyncStatus('synced');
+          setSyncError(null);
+          return { success: true };
+        }
+      }
+
+      // 2. Push local state if local is current
       const res = await api.syncState({
         workouts,
         history,
@@ -1228,8 +1505,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (res.data?.success) {
+        const updated = res.data.updatedAt || Date.now();
+        lastSyncTimeRef.current = updated;
+        setLastSyncTime(updated);
         setSyncStatus('synced');
-        setLastSyncTime(res.data.updatedAt || Date.now());
         setSyncError(null);
         return { success: true };
       } else {
