@@ -111,7 +111,7 @@ export const EditDayModal: React.FC<EditDayModalProps> = ({
           {/* Subtitle / Focus */}
           <div>
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-              Sottotitolo / Focus muscolare (opzionale)
+              Sottotitolo / Focus muscolare
             </label>
             <input
               type="text"
