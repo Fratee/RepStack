@@ -213,6 +213,9 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Impostazione Macchina
               </label>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                Posizione sedile / perno
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -220,7 +223,7 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({ exercise, 
                 step="any"
                 value={machineSetting}
                 onChange={(e) => setMachineSetting(e.target.value)}
-                placeholder="sedile 5, perno 3"
+                placeholder="es. 5"
                 className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold font-mono text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
               />
               {machineSetting !== '' && (
