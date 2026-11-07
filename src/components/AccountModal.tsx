@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, Cloud, RefreshCw, LogOut, CheckCircle2, Shield, HardDrive, WifiOff } from 'lucide-react';
+import { X, User, Cloud, RefreshCw, LogOut, CheckCircle2, Shield, WifiOff } from 'lucide-react';
 import { useWorkout } from '../context/WorkoutContext';
 
 interface AccountModalProps {

@@ -144,7 +144,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, index, onE
           )}
 
           {exercise.notes && (
-            <span className="text-[11px] text-slate-400 dark:text-slate-400 italic ml-auto hidden sm:inline truncate max-w-[200px]">
+            <span
+              className="text-[11px] text-slate-400 dark:text-slate-400 italic ml-auto truncate max-w-[180px] sm:max-w-[260px]"
+              title={exercise.notes}
+            >
               {exercise.notes}
             </span>
           )}

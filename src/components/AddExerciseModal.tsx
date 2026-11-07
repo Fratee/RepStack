@@ -183,7 +183,7 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Impostazione Macchina (opzionale)
+                Impostazione Macchina
               </label>
               <span className="text-[11px] text-slate-400 dark:text-slate-500">
                 Posizione sedile / perno
@@ -201,14 +201,14 @@ export const AddExerciseModal: React.FC<AddExerciseModalProps> = ({ isOpen, onCl
 
           <div>
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-              Note (opzionale)
+              Note
             </label>
-            <input
-              type="text"
+            <textarea
+              rows={3}
               placeholder="es. Movimento controllato"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500 resize-y min-h-[72px]"
             />
           </div>
 
